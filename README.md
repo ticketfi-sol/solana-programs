@@ -10,7 +10,7 @@
 [![Status: In Development](https://img.shields.io/badge/Status-In%20Development-orange)]()
 [![Audit: Pending](https://img.shields.io/badge/Audit-Pending-yellow)]()
 
-[🌐 Website](https://ticketfi.com) · [📄 Whitepaper](./WHITEPAPER.md) · [🐦 Twitter/X](https://x.com/TicketFiSOL)
+[🌐 Website](https://ticketfi.app) · [📄 Whitepaper](./WHITEPAPER.md) · [🐦 Twitter/X](https://x.com/TicketFiSOL)
 
 </div>
 
