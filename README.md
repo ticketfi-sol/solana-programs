@@ -1,6 +1,6 @@
 <div align="center">
 
-# TicketFI — Smart Contracts
+# TicketFi — Smart Contracts
 
 **On-chain raffle & staking protocol built on Solana**
 
@@ -10,7 +10,7 @@
 [![Status: In Development](https://img.shields.io/badge/Status-In%20Development-orange)]()
 [![Audit: Pending](https://img.shields.io/badge/Audit-Pending-yellow)]()
 
-[🌐 Website](https://ticketfi.com) · [🐦 Twitter/X](https://ticketfi.com)
+[🌐 Website](https://ticketfi.com) · [📄 Whitepaper](./WHITEPAPER.md) · [🐦 Twitter/X](https://x.com/TicketFiSOL)
 
 </div>
 
@@ -18,7 +18,7 @@
 
 ## 📋 Overview
 
-TicketFI is a transparent, provably-fair raffle protocol on Solana. Users buy tickets for on-chain raffle rooms, winners are selected using **Switchboard VRF** (Verifiable Random Function), and a portion of every room's fees automatically funds a **TICKETFI token buyback**, creating sustainable tokenomics.
+TicketFi is a transparent, provably-fair raffle protocol on Solana. Users buy tickets for on-chain raffle rooms, winners are selected using **Switchboard VRF** (Verifiable Random Function), and a portion of every room's fees automatically funds a **TicketFi token buyback**, creating sustainable tokenomics.
 
 ### Core Features
 
