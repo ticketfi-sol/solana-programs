@@ -273,6 +273,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 <div align="center">
 
-Built with ❤️ on Solana &nbsp;·&nbsp; [ticketfi.com](https://ticketfi.com)
+Built with ❤️ on Solana &nbsp;·&nbsp; [ticketfi.app](https://ticketfi.app)
 
 </div>
