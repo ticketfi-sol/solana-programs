@@ -1,13 +1,13 @@
 <div align="center">
 
-# 🎟️ TicketFi — Raffle Program
+# 🔒 TicketFi — Staking Program
 
-**On-chain raffle rooms, ticket purchases & Switchboard VRF draws**
+**High-precision token locking, dynamic rewards & yield vaults**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](../../LICENSE)
 [![Built with Anchor](https://img.shields.io/badge/Built%20with-Anchor-9945FF)](https://www.anchor-lang.com/)
 [![Network: Solana](https://img.shields.io/badge/Network-Solana-14F195)](https://solana.com)
-[![Module: Raffle](https://img.shields.io/badge/Module-Raffle-blueviolet)]()
+[![Module: Staking](https://img.shields.io/badge/Module-Staking-ff69b4)]()
 
 [🌐 Website](https://ticketfi.app) · [📄 Whitepaper](../../WHITEPAPER.md) · [✈️ Telegram](https://t.me/TicketFiSOL) · [🐦 Twitter/X](https://x.com/TicketFiSOL)
 
@@ -15,44 +15,37 @@
 
 ---
 
-The core engine of the TicketFi platform. This smart contract is responsible for initializing raffle rooms, managing ticket purchases, enforcing the Switchboard VRF drawing protocol, and executing the platform's transparent fee-sharing and refund mechanisms on Solana.
+An on-chain, high-yield staking protocol built with the **Anchor Framework** on Solana. The staking program allows users to lock their **TICKETFI** tokens to earn protocol-backed yields and a direct share of the platform's raffle buybacks.
 
-## 🌎 Raffle Assets (SOL, BTC & Real World Assets)
+## 📈 Staking Tiers & APY Structure
 
-TicketFi supports both cryptocurrency prizes and tokenized/physical **Real World Assets (RWA)**:
-* **SOL & BTC Raffles**: Ticket pricing and prize payouts denominated in Native SOL or wrapped tokens.
-* **Real World Assets (RWA) Raffles**: High-value physical goods such as:
-  * 📦 **Pokémon Card Packs** (e.g., vintage packs, graded boosters)
-  * ⌚ **Luxury Watches** (e.g., tokenized/physical watches via Courtyard.io)
-  * 🪙 **Collectible Coins** (e.g., silver/gold coins)
-* **Payment Currencies**: Supports both Native SOL and USDC (`buy_ticket_spl`) ticket purchases.
+Users can choose from four lock tiers. Longer locking periods yield higher APY rates and a significantly larger share of the protocol buyback rewards.
+
+| Tier | Lock Duration | Fixed APY Rate | Buyback Reward Weight | Reward Pool Index |
+| :--- | :------------ | :------------- | :-------------------- | :---------------- |
+| **0** | 7 Days | **10%** | **10** | `acc_reward_per_token[0]` |
+| **1** | 30 Days | **15%** | **15** | `acc_reward_per_token[1]` |
+| **2** | 90 Days | **25%** | **25** | `acc_reward_per_token[2]` |
+| **3** | 180 Days | **50%** | **50** | `acc_reward_per_token[3]` |
 
 ---
 
-## 🔄 Room Expiry & Refund Scenarios (Platform FAQ Rules)
+## 🔄 Dual-Reward Mechanism
 
-Every raffle room is bound by a maximum ticket capacity (`max_tickets`) and an expiration deadline (`ends_at`). The program executes three deterministic pathways depending on the room status at expiration:
+The protocol distributes rewards from two separate sources, ensuring sustainable tokenomics and real yield generation:
 
-### Case A: 100% Sold Out (Full Room)
-* **Trigger**: All `max_tickets` are sold before the expiration time.
-* **Drawing**: The room status changes to `drawing`. Switchboard VRF is requested on-chain to generate cryptographically secure randomness.
-* **Settlement**: The winner is determined (`random_u32 % tickets_sold`) and receives **71.43%** of the collected pool. The platform fee of **28.57%** is split (Buyback, Treasury, Jackpot).
-* **Reopening**: The room resets `tickets_sold = 0`, `unique_buyer_count = 0`, increments the `room_cycle`, and extends the deadline, reopening the room for the next round.
+### 1. Fixed APY Rewards
+* Funded directly by the protocol admin into the dedicated `apy_vault` via the `fund_apy_vault` instruction.
+* Accrues continuously and linearly based on the staked amount, the elapsed lock time, and the tier's APY rate.
+* APY formula:
+  $$\text{Pending APY} = \frac{\text{Staked Amount} \times \text{APY Rate} \times \text{Time Elapsed}}{\text{100} \times \text{Seconds Per Year}}$$
 
-### Case B: Expired but Partially Sold ($\ge 2$ Unique Buyers)
-* **Trigger**: The expiration time (`ends_at`) passes, the room is *not* full, but **2 or more unique wallets** have bought tickets.
-* **Drawing**: The room **will not refund**. Instead, a draw is triggered.
-* **Settlement**: Switchboard VRF selects a winner from the tickets that *were* sold:
-  $$\text{winning\_index} = \text{random\_value} \pmod{\text{tickets\_sold}}$$
-  The winner receives **71.43%** of the accumulated pool, and the **28.57%** fee split is distributed.
-* **Reopening**: The room cycles, resets, and reopens.
-
-### Case C: Expired with Insufficient Participation ($\le 1$ Unique Buyer)
-* **Trigger**: The expiration time passes, and **0 or 1 unique buyers** have purchased tickets.
-* **Refund**: The `handle_expired_room` instruction is called:
-  * If there is **1 buyer**, **100% of their ticket price is immediately refunded** back to their wallet on-chain.
-  * If there are **0 buyers**, no refund is processed.
-* **Reset & Reopen**: To keep the platform active, the room is reset (`tickets_sold = 0`, `unique_buyer_count = 0`), the `room_cycle` is incremented (invalidating old buyer entry PDAs so they can participate in the next round), and the expiration timer is extended by `DEFAULT_ROOM_EXTENSION_SECONDS` (24 hours).
+### 2. Protocol Buyback Rewards (Platform Fee Sharing)
+* **Buyback Source**: 50% of the raffle program platform fees (~14.28% of all ticket sales) are used to buy back TICKETFI tokens from the open market.
+* **Distribution**: These bought-back tokens are deposited into the staking pool via `deposit_rewards`.
+* **Dynamic Weight Allocation**: The deposited tokens are split dynamically among the active tiers based on their weights (**10 / 15 / 25 / 50**). Only tiers with active stakers receive a share, preventing rewards from being distributed to empty pools.
+* **Per-Token Accumulator**: Rewards are tracked with a high-precision multiplier (`PRECISION = 1e12`) to eliminate rounding errors:
+  $$\text{Accumulator Increment} = \frac{\text{Tier Reward Share} \times 10^{12}}{\text{Total Staked in Tier}}$$
 
 ---
 
@@ -60,21 +53,19 @@ Every raffle room is bound by a maximum ticket capacity (`max_tickets`) and an e
 
 | Instruction | Access | Description |
 | :--- | :--- | :--- |
-| `initialize_platform` | Admin | Sets up global treasury, buyback, and jackpot wallets. |
-| `initialize_raffle_room`| Admin | Creates a new raffle room (SOL or USDC) with price, max tickets, and expiration deadline. |
-| `buy_ticket` | Public | Purchases a ticket for a SOL room. Transfers SOL to the vault PDA. Mints a deterministic Ticket account. |
-| `buy_ticket_spl` | Public | Purchases a ticket for a USDC room. Transfers USDC tokens to the vault token account. |
-| `commit_draw` | Admin/Bot | Commits the drawing process for full or expired ($\ge 2$ buyers) rooms, locking in the Switchboard VRF account. |
-| `settle_draw` | Admin/Bot | Resolves the Switchboard VRF output, verifies the winner, distributes the prize pool, and updates room status. |
-| `handle_expired_room` | Admin/Bot | Resets an expired room with $\le 1$ buyer, triggers refunds, increments room cycle, and extends deadline by 24h. |
-| `admin_rescue_spl` | Admin | Rescue utility for admin to withdraw any stuck SPL tokens from vault accounts. |
+| `initialize_pool` | Admin | One-time initialization of the staking pool configuration, linking the TICKETFI mint and treasury vaults. |
+| `initialize_vaults` | Admin | Initializes the PDA token accounts: `staking_vault` (stores staked/buyback tokens) and `apy_vault` (stores APY reward tokens). |
+| `stake` | Public | Locks a specified amount of TICKETFI tokens for a selected tier duration (7, 30, 90, or 180 days). Initializes the user's position state PDA. |
+| `unstake` | Public | Unlocks and returns the user's staked tokens *after* the lock duration has expired. Any unclaimed rewards are safely cached in the state account. |
+| `claim_rewards` | Public | Calculates and transfers all pending APY and Buyback rewards to the user's token wallet. If the user has already unstaked, this closes the account and refunds lamports (rent exemption). |
+| `deposit_rewards` | Public/Bot | Deposits bought-back TICKETFI tokens from the platform buyback wallet and updates the dynamic weighted reward accumulators. |
+| `fund_apy_vault` | Admin | Deposits TICKETFI tokens into the APY reward vault to fund staking yields. |
 
 ---
 
-## 🎲 Provably Fair Randomness (Switchboard VRF)
+## 🧮 High-Precision & Security Architecture
 
-All draws utilize **Switchboard On-Demand VRF (Verifiable Random Function)**:
-1. **On-Chain Request**: When drawing is committed, the program records the current slot.
-2. **SGX Enclave Execution**: Switchboard off-chain oracles execute the random number generation inside a secure Intel SGX enclave.
-3. **Cryptographic Verification**: The generated randomness is submitted back to the Solana network, where its signature is verified on-chain.
-4. **Unmanipulable Winner Selection**: Neither the admin, players, nor the oracles can predict or alter the outcome, guaranteeing absolute fairness.
+* **Linear APY Accrual**: The system calculates rewards on every interaction (e.g., claiming, unstaking) based on the Solana `Clock` timestamp.
+* **User Stake Counter PDA**: Safe derivation of individual staking positions using a counter PDA: `["user_stake", user_pubkey, stake_index_le_bytes]`. Allows multiple staking positions per wallet.
+* **Auto-Cleanup**: When a user unstakes and subsequently claims all remaining rewards, the program closes the state account, returning the rent-exemption lamports to the user's wallet.
+* **Checked Math**: All operations use checked math (`checked_add`, `checked_mul`, etc.) to prevent overflow/underflow attacks.
