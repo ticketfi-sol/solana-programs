@@ -4,7 +4,7 @@
 
 *Document Version: 1.0.0 (Release Candidate)*  
 *Target Network: Solana (Mainnet)*  
-*Official Website:* [ticketfi.com](https://ticketfi.com)
+*Official Website:* [ticketfi.app](https://ticketfi.app)
 
 ---
 
