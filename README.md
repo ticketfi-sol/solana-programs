@@ -10,7 +10,7 @@
 [![Status: In Development](https://img.shields.io/badge/Status-In%20Development-orange)]()
 [![Audit: Pending](https://img.shields.io/badge/Audit-Pending-yellow)]()
 
-[🌐 Website](https://ticketfi.com) · [📄 Whitepaper](./WHITEPAPER.md) · [💬 Discord](#) · [🐦 Twitter/X](#)
+[🌐 Website](https://ticketfi.app) · [📄 Whitepaper](./WHITEPAPER.md) · [✈️ Telegram](https://t.me/TicketFiSOL) · [🐦 Twitter/X](https://x.com/TicketFiSOL)
 
 </div>
 
@@ -276,6 +276,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 <div align="center">
 
-Built with ❤️ on Solana &nbsp;·&nbsp; [ticketfi.com](https://ticketfi.com)
+Built with ❤️ on Solana &nbsp;·&nbsp; [ticketfi.app](https://ticketfi.app)
 
 </div>
