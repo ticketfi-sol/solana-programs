@@ -10,7 +10,7 @@
 [![Status: In Development](https://img.shields.io/badge/Status-In%20Development-orange)]()
 [![Audit: Pending](https://img.shields.io/badge/Audit-Pending-yellow)]()
 
-[🌐 Website](https://ticketfi.app) · [📄 Whitepaper](./WHITEPAPER.md) · [🐦 Twitter/X](https://x.com/TicketFiSOL)
+[🌐 Website](https://ticketfi.com) · [📄 Whitepaper](./WHITEPAPER.md) · [💬 Discord](#) · [🐦 Twitter/X](#)
 
 </div>
 
@@ -223,16 +223,19 @@ anchor test
 
 ## 📁 Repository Structure
 
+* 🎟️ [**Raffle Program (`ticketfi-raffle`)**](./programs/ticketfi-raffle/README.md) — Detailed guide on raffle assets (SOL, BTC, RWA), refund scenarios (A, B, and C), and instruction API.
+* 🔒 [**Staking Program (`ticketfi-staking`)**](./programs/ticketfi_staking/README.md) — Detailed guide on lock tiers (7/30/90/180 days), dynamic buyback weights, and yield configurations.
+
 ```
 contracts/
 ├── programs/
-│   ├── ticketfi-raffle/          # Raffle & rooms program
+│   ├── ticketfi-raffle/          # Raffle & rooms program (see README inside)
 │   │   └── src/
 │   │       ├── lib.rs            # All instructions
 │   │       ├── state.rs          # Account structures
 │   │       ├── error.rs          # Custom error codes
 │   │       └── constants.rs      # Program constants
-│   └── ticketfi_staking/         # Staking program
+│   └── ticketfi_staking/         # Staking program (see README inside)
 │       └── src/
 │           ├── lib.rs            # All instructions & state
 │           ├── error.rs          # Custom error codes
@@ -273,6 +276,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 <div align="center">
 
-Built with ❤️ on Solana &nbsp;·&nbsp; [ticketfi.app](https://ticketfi.app)
+Built with ❤️ on Solana &nbsp;·&nbsp; [ticketfi.com](https://ticketfi.com)
 
 </div>
